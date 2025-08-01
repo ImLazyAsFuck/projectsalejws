@@ -23,7 +23,7 @@ public class RegisterDTO{
     private String password;
 
     @NotBlank(message = "Full name cannot be blank")
-    private String fullName;
+    private String fullName;    
 
     @Email(message = "Email is not valid (example@domain.sth)")
     @NotBlank(message = "Email cannot be blank")
