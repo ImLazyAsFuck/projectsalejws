@@ -33,7 +33,7 @@ public class User{
     @Column(nullable = false, columnDefinition = "BIT")
     private boolean status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
@@ -60,6 +60,5 @@ public class User{
     @Column(nullable = false, columnDefinition = "BIT")
     private boolean isDeleted;
 
-    @Column(nullable = false)
     private LocalDate deletedAt;
 }

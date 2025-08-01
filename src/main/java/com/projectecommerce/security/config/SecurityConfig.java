@@ -34,7 +34,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                        .requestMatchers("/api/auth/**").hasAnyRole("ADMIN", "SALES", "CUSTOMER")
+                        .requestMatchers("/api/auth/verify", "/api/auth/profile", "/api/auth/change-password").hasAnyRole("ADMIN", "SALES", "CUSTOMER")
 
                         .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}/status").hasRole("ADMIN")
@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/categories/{id}").hasAnyRole("ADMIN", "SALES")
                         .requestMatchers(HttpMethod.DELETE, "/api/categories/{id}").hasRole("ADMIN")
 
-                        .anyRequest().denyAll()
+                        .anyRequest().authenticated()
                 )
 
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))

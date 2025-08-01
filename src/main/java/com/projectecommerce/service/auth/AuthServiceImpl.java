@@ -69,14 +69,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public APIResponse<JWTResponse> login(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    public APIResponse<JWTResponse> login(LoginDTO dto) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new ConflictException("Không tìm thấy người dùng"));
 
-        String token = jwtTokenProvider.generateToken(username);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(username);
+        String token = jwtTokenProvider.generateToken(dto.getUsername());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(dto.getUsername());
         ERole role = user.getRoles().iterator().next().getName();
 
         return APIResponse.<JWTResponse>builder()
@@ -93,6 +93,9 @@ public class AuthServiceImpl implements AuthService {
     public void changePassword(User user, ChangePasswordDTO dto) {
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new ConflictException("Mật khẩu cũ không đúng");
+        }
+        if(!dto.getOldPassword().equals(dto.getNewPassword())){
+            throw new ConflictException("Xác nhận mật khẩu không giống với mật khẩu");
         }
 
         user.setPassword(passwordEncoder.encode(dto.getNewPassword()));

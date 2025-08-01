@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @Data @AllArgsConstructor @NoArgsConstructor @Builder
 public class ChangePasswordDTO {
     @NotBlank private String oldPassword;
+    @NotBlank private String confirmPassword;
     @NotBlank @Size(min = 6) private String newPassword;
 }

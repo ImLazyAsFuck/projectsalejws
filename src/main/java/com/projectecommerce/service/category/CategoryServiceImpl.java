@@ -5,6 +5,7 @@ import com.projectecommerce.model.dto.response.PagedResultDTO;
 import com.projectecommerce.model.dto.response.PaginationDTO;
 import com.projectecommerce.model.entity.Category;
 import com.projectecommerce.repository.CategoryRepository;
+import com.projectecommerce.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService{
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public PagedResultDTO<Category> getAllCategories(int page, int size) {
@@ -68,7 +70,9 @@ public class CategoryServiceImpl implements CategoryService{
     public void deleteCategory(Long id){
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
-        category.setName(category.getName() + "_DELETED");
-        categoryRepository.save(category);
+        if(productRepository.existsByCategoryId(id)){
+            throw new IllegalArgumentException("Can't delete category with id: " + id + " because it has products");
+        }
+        categoryRepository.delete(category);
     }
 }

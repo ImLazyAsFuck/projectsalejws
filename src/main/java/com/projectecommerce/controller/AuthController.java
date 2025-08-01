@@ -8,6 +8,7 @@ import com.projectecommerce.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ import java.time.LocalDateTime;
 public class AuthController {
     private final AuthService authService;
 
+
     @PostMapping("/register")
-    public ResponseEntity<APIResponse<Void>> register(@ModelAttribute @Valid RegisterDTO dto) {
+    public ResponseEntity<APIResponse<Void>> register(@RequestBody @Valid RegisterDTO dto) {
         authService.register(dto);
         return ResponseEntity.ok(APIResponse.<Void>builder()
                 .success(true)
@@ -31,7 +33,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<APIResponse<JWTResponse>> login(@RequestBody @Valid LoginDTO dto) {
-        return ResponseEntity.ok(authService.login(dto.getUsername(), dto.getPassword()));
+        return ResponseEntity.ok(authService.login(dto));
     }
 
     @PostMapping("/verify")
@@ -44,6 +46,7 @@ public class AuthController {
                 .timeStamp(LocalDateTime.now())
                 .build());
     }
+
 
     @GetMapping("/profile")
     public ResponseEntity<APIResponse<UserSummaryDTO>> getProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
